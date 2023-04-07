@@ -102,4 +102,10 @@ public class TiposCuentasController : Controller
 		var tipoCuentaExistente = await _repositorioTiposCuentas.Existe(nombre, usuarioId);
 		return tipoCuentaExistente ? Json($"El nombre {nombre} ya existe.") : Json(true);
 	}
+
+	[HttpPost]
+	public async Task<IActionResult> Ordenar([FromBody] int[] ids)
+	{
+		return Ok();
+	}
 }
