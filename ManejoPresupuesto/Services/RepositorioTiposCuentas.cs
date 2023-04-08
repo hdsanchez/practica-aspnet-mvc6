@@ -40,7 +40,8 @@ public class RepositorioTiposCuentas : IRepositorioTiposCuentas
 		return await connection.QueryAsync<TipoCuentaViewModel>(
 			@"SELECT Id, Nombre, Orden " +
 			"FROM TiposCuentas " +
-			"WHERE UsuarioId = @UsuarioId;",
+			"WHERE UsuarioId = @UsuarioId " +
+			"ORDER BY Orden",
 			new { usuarioId });
 	}
 
@@ -71,5 +72,12 @@ public class RepositorioTiposCuentas : IRepositorioTiposCuentas
 			@"DELETE TiposCuentas
 			WHERE Id = @Id",
 			new { id });
+	}
+
+	public async Task Ordenar(IEnumerable<TipoCuentaViewModel> tipoCuentas)
+	{
+		using var connection = new SqlConnection(_connectionString);
+		var query = "UPDATE TiposCuentas SET Orden = @Orden WHERE Id = @Id;";
+		await connection.ExecuteAsync(query, tipoCuentas);
 	}
 }

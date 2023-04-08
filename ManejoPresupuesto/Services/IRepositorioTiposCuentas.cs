@@ -11,4 +11,5 @@ public interface IRepositorioTiposCuentas
     Task<bool> Existe(string nombre, int usuarioId);
     Task<IEnumerable<TipoCuentaViewModel>> Obtener(int usuarioId);
 	Task<TipoCuentaViewModel> ObtenerPorId(int id, int usuarioId);
+	Task Ordenar(IEnumerable<TipoCuentaViewModel> tipoCuentas);
 }

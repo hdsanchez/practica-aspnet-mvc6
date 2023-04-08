@@ -106,6 +106,22 @@ public class TiposCuentasController : Controller
 	[HttpPost]
 	public async Task<IActionResult> Ordenar([FromBody] int[] ids)
 	{
+		var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
+		var tiposCuentas = await _repositorioTiposCuentas.Obtener(usuarioId);
+		var idsTiposCuentas = tiposCuentas.Select(tc => tc.Id);
+
+		// Valido que los ids brindados por el usuario por parámetro le pertenezcan realmente.
+		var idsTiposCuentasNoPertenecenAlUsuario = ids.Except(idsTiposCuentas).ToList();
+		if (idsTiposCuentasNoPertenecenAlUsuario.Count > 0)
+			return Forbid();
+
+		var tiposCuentasOrdenados = ids.Select((valor, indice) => new TipoCuentaViewModel()
+		{
+			Id = valor,
+			Orden = indice + 1
+		}).AsEnumerable();
+
+		await _repositorioTiposCuentas.Ordenar(tiposCuentasOrdenados);
 		return Ok();
 	}
 }
