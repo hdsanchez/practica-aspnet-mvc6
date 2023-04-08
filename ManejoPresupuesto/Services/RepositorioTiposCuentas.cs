@@ -17,10 +17,13 @@ public class RepositorioTiposCuentas : IRepositorioTiposCuentas
 	{
 		using var connection = new SqlConnection(_connectionString);
 		var id = await connection.QuerySingleAsync<int>(
-			@"INSERT INTO TiposCuentas (Nombre, UsuarioId, Orden) 
-			VALUES (@Nombre, @UsuarioId, 0); 
-			SELECT SCOPE_IDENTITY();",
-			tipoCuenta);
+			"TiposCuentas_Insertar",
+			new
+			{
+				tipoCuenta.UsuarioId,
+				tipoCuenta.Nombre
+			},
+			commandType: System.Data.CommandType.StoredProcedure);
 		tipoCuenta.Id = id;
 	}
 
