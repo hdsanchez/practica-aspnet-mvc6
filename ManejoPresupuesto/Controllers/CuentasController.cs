@@ -18,6 +18,20 @@ public class CuentasController : Controller
         _repoCuentas = repoCuentas;
     }
 
+    public async Task<IActionResult> Index()
+    {
+        var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
+        var cuentasConTipoCuenta = await _repoCuentas.Buscar(usuarioId);
+        var modelo = cuentasConTipoCuenta
+            .GroupBy(x => x.TipoCuenta)
+            .Select(grupo => new IndiceCuentasViewModel
+            {
+                TipoCuenta = grupo.Key,
+                Cuentas = grupo.AsEnumerable()
+            }).ToList();
+        return View(modelo);
+    }
+
     [HttpGet]
     public async Task<IActionResult> Crear()
     {

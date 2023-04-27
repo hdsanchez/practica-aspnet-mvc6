@@ -23,4 +23,17 @@ public class RepositorioCuentas : IRepositorioCuentas
                 cuenta);
         cuenta.Id = id;
     }
+
+    public async Task<IEnumerable<CuentaViewModel>> Buscar(int usuarioId)
+    {
+        using var connection = new SqlConnection(_connectionString);
+        return await connection.QueryAsync<CuentaViewModel>(
+                @"SELECT Cuentas.Id, Cuentas.Nombre, Balance, tc.Nombre AS TipoCuenta
+                FROM Cuentas
+                INNER JOIN TiposCuentas tc
+                ON tc.Id = Cuentas.TipoCuentaId
+                WHERE tc.UsuarioId = @UsuarioId
+                ORDER BY tc.Orden",
+                new { usuarioId });
+    }
 }
