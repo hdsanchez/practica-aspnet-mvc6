@@ -56,6 +56,38 @@ public class CuentasController : Controller
         return RedirectToAction("Index");
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Editar(CreadorCuentaViewModel cuentaEditar)
+    {
+        var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
+        var cuenta = await _repoCuentas.ObtenerPorId(cuentaEditar.Id, usuarioId);
+        if (cuenta is null)
+            return RedirectToAction("NoEncontrado", "Home");
+        var tipoCuenta = await _repoTiposCuentas.ObtenerPorId(cuentaEditar.TipoCuentaId, usuarioId);
+        if (tipoCuenta is null)
+            return RedirectToAction("NoEncontrado", "Home");
+        await _repoCuentas.Actualizar(cuentaEditar);
+        return RedirectToAction("Index");
+    }
+
+    public async Task<IActionResult> Editar(int id)
+    {
+        var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
+        var cuenta = await _repoCuentas.ObtenerPorId(id, usuarioId);
+        if (cuenta is null)
+            return RedirectToAction("NoEncontrado", "Home");
+        var modelo = new CreadorCuentaViewModel
+        {
+            Id = cuenta.Id,
+            Nombre = cuenta.Nombre,
+            TipoCuentaId = cuenta.TipoCuentaId,
+            Descripcion = cuenta.Descripcion,
+            Balance = cuenta.Balance
+        };
+        modelo.TiposCuentas = await ObtenerTiposCuentas(usuarioId);
+        return View(modelo);
+    }
+
     private async Task<IEnumerable<SelectListItem>> ObtenerTiposCuentas(int usuarioId)
     {
         var tiposCuentas = await _repoTiposCuentas.Obtener(usuarioId);

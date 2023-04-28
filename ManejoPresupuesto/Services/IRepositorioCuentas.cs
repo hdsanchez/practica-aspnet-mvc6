@@ -4,6 +4,8 @@ namespace ManejoPresupuesto.Services;
 
 public interface IRepositorioCuentas
 {
-    Task<IEnumerable<CuentaViewModel>> Buscar(int usuarioId);
     Task Crear(CuentaViewModel cuenta);
+    Task<IEnumerable<CuentaViewModel>> Buscar(int usuarioId);
+    Task<CuentaViewModel> ObtenerPorId(int id, int usuarioId);
+    Task Actualizar(CreadorCuentaViewModel cuenta);
 }
